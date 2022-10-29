@@ -9,14 +9,24 @@ import Foundation
 
 final class ViewModel {
     var cryptoHolding = [YourCryptoHolding]()
+    var cryptoDetails: CryptoDetails?
     var cryptoPrice = [CryptoPrice]()
     var count = 0
     
-    func fetchResponse(completionHandler: @escaping (CryptoDetails) -> ()) {
+    func fetchResponse() {
         let urlString = "\(APIConstants.urlString)"
         performRequest(urlString: urlString) { details in
-            self.cryptoHolding = details.yourCryptoHoldings
-            self.cryptoPrice = details.cryptoPrices
+            print(details.cryptoPrices)
+            print(details.yourCryptoHoldings)
+            for item in details.yourCryptoHoldings {
+                self.cryptoHolding.append(item)
+            }
+            
+            for item in details.cryptoPrices {
+                self.cryptoPrice.append(item)
+            }
+            
+            self.cryptoDetails = details
         }
     }
     
@@ -29,10 +39,7 @@ final class ViewModel {
     }
     
     func getCryptosCount() -> Int {
-        fetchResponse() { details in
-            self.count = details.cryptoPrices.count
-        }
-        return count
+        return self.cryptoPrice.count
     }
     
     

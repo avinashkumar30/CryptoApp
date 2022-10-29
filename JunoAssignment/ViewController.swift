@@ -10,22 +10,29 @@ import UIKit
 class ViewController: UIViewController {
 
     private let viewModel = ViewModel()
+    private var cryptoDetails: CryptoDetails?
     
     @IBOutlet weak var CryptoTableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        DispatchQueue.main.async {
+            self.cryptoDetails = self.viewModel.cryptoDetails
+        }
     }
 }
 
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return viewModel.getCryptosCount()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CryptoTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CryptoTableViewCell
+        
         let arr = viewModel.getCryptoPriceList(index: indexPath.row)
+        
         cell.title.text = arr.title
         cell.currentPrice.text = arr.currentPriceInUsd
         if let url = URL(string: arr.logo) {
